@@ -45,9 +45,26 @@ app.delete("/api/notes/:id", (request, response) => {
   response.status(204).end();
 });
 
+const generateNewId = () => {
+  let newId = notes.length > 0 ? Math.max(...notes.map(note => {return note.id})) : 0;
+  return newId + 1
+}
+
 app.post("/api/notes", (request, response) => {
-  const note = request.body;
-  console.log(note);
+  const body = request.body;
+  if (!body.content) {
+    return response.status(400).json({"error": "content missing"})
+  }
+  const note = 
+    {
+      id: generateNewId(),
+      content: body.content,
+      date: new Date(),
+      important: body.important || false,
+    }
+  
+  notes = notes.concat(note);
+  console.log(notes)
   response.json(note);
 });
 
